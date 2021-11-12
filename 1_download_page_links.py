@@ -61,6 +61,7 @@ for p in panels:
     url = p.find('a')['href']
     url = 'https://sherloc.unodc.org/cld/'+url[6:]
     name = url.split('/')[-1].split('.html?')[0]
+    name = '{:04d}'.format(len(all_panels.index)) + '_' + str(name)
     all_panels = all_panels.append({'name':str(name), 'page_link':url}, ignore_index=True)
     # print(url)
 
