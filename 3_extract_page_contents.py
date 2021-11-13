@@ -5,6 +5,7 @@ import os
 import time
 import pickle
 import keywords
+import re
 
 
 load_path = 'D:/datasets/law_human_trafficking/page_html/'
@@ -15,7 +16,7 @@ df[['facts_summary', 'legal_reasons',
     'acts', 'means', 'purpose', 'form', 'imprisonment',
     'sector',
     'country', 'decision_date', 'legal_system', 'latest_court_ruling',
-    'charge']] = '-'
+    'charge', 'court', 'victims', 'defendants', 'pdf_link']] = '-'
 
 for i in range(len(df.index)):
     name = df.loc[i,'name']
@@ -53,7 +54,16 @@ for i in range(len(df.index)):
         ## keywords
         df = keywords.extract_and_search(df, i, soup, [df.loc[i, 'facts_summary'], df.loc[i, 'legal_reasons']])
 
-        ## country
+        ## imprisonment
+        terms = []
+        for a in soup.find_all('div', class_='termOfImprisonment field'):
+            b = a.find('div', class_='value')
+            if b is not None:
+                terms.append(re.sub(r'\W+', ' ', b.text))
+        if len(terms):
+            df.loc[i, 'imprisonment'] = ' | '.join(terms)
+
+            ## country
         for a in soup.find('div', class_='countryNoHighlight field'):
             for b in a.find('a'):
                 df.loc[i,'country'] = str(b)
@@ -80,8 +90,36 @@ for i in range(len(df.index)):
             charges.append(b.text)
         df.loc[i, 'charge'] = '\n=================================\n'.join(charges)
 
+        ## court
+        a = soup.find('div', class_='proceeding_court_title fieldFullWidth')
+        if a is not None:
+            b = a.find('div', class_='value')
+            if b is not None:
+                df.loc[i, 'court'] = b.text.strip('\n')
 
-        # print(df.loc[i, 'charge'])
+
+        ## victims
+
+
+        ## defendants
+
+
+        ## pdf_link
+        a = soup.find('div', class_='sources')
+        links = []
+        if a is not None:
+            b = a.find_all('p')
+            if b is not None:
+
+                for c in b:
+                    d = c.find('a', href=True)
+                    if d is not None:
+                        links.append(d['href'])
+
+        if len(links):
+            df.loc[i, 'pdf_link'] = ' \n'.join(links)
+
+            # print(df.loc[i, 'charge'])
         # a = soup.find_all('div', class_='legislationStatusCode fieldFullWidth')
         # # print(len(a))
         # if len(a):
