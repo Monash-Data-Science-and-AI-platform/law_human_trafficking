@@ -1,0 +1,35 @@
+{
+  "acts": {
+    "recruitment": ["recruit"],
+    "transportation": ["transport"],
+    "transfer": [],
+    "harbouring": ["harbour", "harbor"],
+    "receipt of persons": []
+  },
+  "means": {
+    "threat": [],
+    "use of force": [],
+    "other forms of coercion": ["coerc"],
+    "abduction": ["abduct"],
+    "fraud": [],
+    "deception": ["deceive"],
+    "abuse of power": [],
+    "abuse a position of vulnerability": ["position of vulnerability", "vulnerable"],
+    "giving payments to achieve the consent of a person having control over another person": [],
+    "receiving of payments to achieve the consent of a person having control over another person": [],
+    "giving benefits to achieve the consent of a person having control over another person": [],
+    "receiving of benefits to achieve the consent of a person having control over another person": []
+  },
+  "purpose": {
+    "the exploitation of the prostitution of others": ["exploit", "prostit"],
+    "other forms of sexual exploitation": [],
+    "forced labour": ["forced labor"],
+    "forced services": [],
+    "slavery": ["slave"],
+    "practices similar to slavery": [],
+    "servitude": [],
+    "removal of organs": []
+
+  }
+}
+
