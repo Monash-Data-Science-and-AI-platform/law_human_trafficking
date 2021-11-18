@@ -36,6 +36,8 @@ for i in range(len(df.index)):
                 facts_summary += c.text
                 if len(c.text) > 2:
                     facts_summary += ' \n '
+            if i in [53]:
+                facts_summary = 'ERROR'
             df.loc[i, 'facts_summary'] = facts_summary
 
     ## legal_reasons
@@ -49,6 +51,9 @@ for i in range(len(df.index)):
                 legal_reasons += d.text
                 if len(d.text) > 2:
                     legal_reasons += ' \n '
+            # if i in faulty_cases:
+            #     legal_reasons = legal_reasons.replace('\n',' || ')
+            #     legal_reasons = legal_reasons.replace(',', ';')
             df.loc[i, 'legal_reasons'] = legal_reasons
 
     ## keywords
@@ -88,7 +93,10 @@ for i in range(len(df.index)):
     charges = []
     for b in a:
         charges.append(b.text)
-    df.loc[i, 'charge'] = '\n=================================\n'.join(charges)
+    full_charge = '\n=================================\n'.join(charges)
+    if i in [633, 911]:
+        full_charge = 'ERROR'
+    df.loc[i, 'charge'] = full_charge
 
     ## court
     a = soup.find('div', class_='proceeding_court_title fieldFullWidth')
@@ -99,10 +107,32 @@ for i in range(len(df.index)):
 
 
     ## victims
+    a = soup.find('div', class_='victimsPlaintiffs')
+    if a is not None:
+        b = a.find_all('div', class_='person')
+        if b is not None:
+            victims = []
+            for c in b:
+                gender = '?'
+                age = '?'
+                d = c.find_all('div', class_='age field line')
+                if d is not None:
+                    for e in d:
+                        f = e.find('div', class_='label')
+                        if f is not None:
+                            if f.text == 'Gender: ':
+                                gender = e.find('div', class_='value').text
+                            elif f.text == 'Age: ':
+                                age = e.find('div', class_='value').text
 
+                victims.append(gender+' '+age)
+            if len(victims):
+                df.loc[i, 'victims'] = ' | '.join(victims)
 
     ## defendants
-
+    a = soup.find('div', class_='defendantsRespondents')
+    if a is not None:
+        df.loc[i, 'defendants'] = a.text
 
     ## pdf_link
     a = soup.find('div', class_='sources')
@@ -146,7 +176,7 @@ for i in range(len(df.index)):
     #     break
 
 # print(df)
-df.to_csv('dataset.csv')
+df.to_csv('dataset extract.csv')
 
 # for html_file in os.listdir(load_path):
 #     f = open(os.path.join(load_path,html_file),'r', encoding='utf8')
