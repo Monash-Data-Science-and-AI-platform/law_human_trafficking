@@ -85,17 +85,7 @@ all_panels.to_csv('dataset.csv')
 
 
 
-    # # URL = "https://sherloc.unodc.org/cld/case-law-doc/traffickingpersonscrimetype/nam/2020/s_v_pretorius_cc_22018_2020_nahcmd_507.html?lng=en&tmpl=sherloc"
-    # # URL = 'https://sherloc.unodc.org/cld/case-law-doc/traffickingpersonscrimetype/cze/2012/17_t_62010.html?lng=en&tmpl=sherloc'
-    # page = requests.get(URL)
-    # folder_location = 'D:/Desktop/pdfs'
-    #
-    # soup = bs.BeautifulSoup(page.text, "html.parser")
-    # for link in soup.select("a[href$='.pdf']"):
-    #     # Name the pdf files using the last portion of each link which are unique in this case
-    #     filename = os.path.join(folder_location, link['href'].split('/')[-1])
-    #     with open(filename, 'wb') as f:
-    #         f.write(requests.get(urljoin(URL, link['href'])).content)
+
 
 
 
