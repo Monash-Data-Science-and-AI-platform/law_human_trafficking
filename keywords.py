@@ -17,6 +17,7 @@ Else if a keyword variant is found, flag = 't'
 
 def extract_and_search(df, i, soup):
     definitions = json.load(open('keywords.json','r'))
+    bad_cases = json.load(open('bad_cases.json','r'))
     flags = copy.deepcopy(definitions)
     for theme in flags:
         for keyword in flags[theme]:
@@ -52,8 +53,6 @@ def extract_and_search(df, i, soup):
                 if theme == 'sector' or theme == 'form':
                     df.loc[i, theme] = ' | '.join(values_list)
                 elif theme is not None:
-                    matches = []
-
                     for keyword in definitions[theme]:
                         in_keywords = False
                         for v in values_list:
@@ -73,18 +72,24 @@ def extract_and_search(df, i, soup):
                                     break
 
     ## search keywords in text
+    facts_summary = df.loc[i, 'facts_summary']
+    if i == 53:
+        facts_summary = bad_cases['53']['facts_summary']
+
+    legal_reasons = df.loc[i, 'legal_reasons']
+
     for theme in definitions:
         for keyword in definitions[theme]:
             in_text = False
-            if re.search(keyword, df.loc[i, 'facts_summary'], re.IGNORECASE) or \
-                    re.search(keyword, df.loc[i, 'legal_reasons'], re.IGNORECASE):
+            if re.search(keyword, facts_summary, re.IGNORECASE) or \
+                    re.search(keyword, legal_reasons, re.IGNORECASE):
                 flags[theme][keyword] += 'T'
                 in_text = True
             # if original keyword not found, search for variants
             if not in_text:
                 for variant in definitions[theme][keyword]:
-                    if re.search(variant, df.loc[i, 'facts_summary'], re.IGNORECASE) or \
-                            re.search(variant, df.loc[i, 'legal_reasons'], re.IGNORECASE):
+                    if re.search(variant, facts_summary, re.IGNORECASE) or \
+                            re.search(variant, legal_reasons, re.IGNORECASE):
                         flags[theme][keyword] += 't'
                         in_text = True
                         break
