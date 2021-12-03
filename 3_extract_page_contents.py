@@ -16,7 +16,7 @@ df[['facts_summary', 'legal_reasons',
     'acts', 'means', 'purpose', 'form', 'imprisonment',
     'sector',
     'country', 'decision_date', 'legal_system', 'latest_court_ruling',
-    'charge', 'court', 'victims', 'defendants', 'pdf_link']] = '-'
+    'charge', 'court', 'victims', 'defendants', 'defendants_detail', 'pdf_link']] = '-'
 
 for i in range(len(df.index)):
     name = df.loc[i,'name']
@@ -109,12 +109,13 @@ for i in range(len(df.index)):
     ## victims
     a = soup.find('div', class_='victimsPlaintiffs')
     if a is not None:
-        b = a.find_all('div', class_='person')
-        if b is not None:
+        persons = a.find_all('div', class_='person')
+        if persons is not None:
             victims = []
-            for c in b:
+            for c in persons:
                 gender = '?'
                 age = '?'
+                nation = '?'
                 d = c.find_all('div', class_='age field line')
                 if d is not None:
                     for e in d:
@@ -124,15 +125,49 @@ for i in range(len(df.index)):
                                 gender = e.find('div', class_='value').text
                             elif f.text == 'Age: ':
                                 age = e.find('div', class_='value').text
-
-                victims.append(gender+' '+age)
-            if len(victims):
-                df.loc[i, 'victims'] = ' | '.join(victims)
+                d = c.find('div', class_='name field line')
+                if d is not None:
+                    e = d.find('div', class_='value')
+                    if e is not None:
+                        nation = e.text
+                        nation = nation.replace(' / ', '-').strip(' \n\t')
+                        nation = re.sub("\s+", " ", nation)
+                victims.append('_'.join([gender,age,nation]))
+            df.loc[i, 'victims'] = ' | '.join(victims)
 
     ## defendants
     a = soup.find('div', class_='defendantsRespondents')
     if a is not None:
-        df.loc[i, 'defendants'] = a.text
+        df.loc[i, 'defendants_detail'] = a.text
+        persons = a.find_all('div', class_='person')
+        if persons is not None:
+            defendants = []
+            for p in persons:
+                gender = '?'
+                nation = '?'
+                age = '?'
+                q = p.find_all('div', class_='name field line')
+                if q is not None:
+                    for r in q:
+                        label = r.find('div', class_='label')
+                        if label is not None:
+                            if label.text == 'Gender: ':
+                                gender = r.find('div', class_='value').text
+                            elif label.text == 'Nationality: ':
+                                nation = r.find('div', class_='value').text
+                                nation = nation.replace(' / ', '-').strip(' \n\t')
+                                nation = re.sub("\s+", " ", nation)
+
+                q = p.find('div', class_='age field line')
+                if q is not None:
+                    age = q.find('div', class_='value').text
+
+                defendants.append('_'.join([gender,age,nation]))
+            df.loc[i, 'defendants'] = ' | '.join(defendants)
+
+
+
+
 
     ## pdf_link
     a = soup.find('div', class_='sources')
