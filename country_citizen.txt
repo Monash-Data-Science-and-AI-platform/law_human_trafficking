@@ -1,0 +1,111 @@
+of the Federated States of Micronesia,microne
+of the Republic of Korea,korea
+Japanese,japan
+Dominican,domini
+British,brit
+Canadian,canad
+Russian,russia
+Sierra Leonean,sierra
+Turkish,turk
+Georgian,georg
+Bangladeshi,bangla
+Fiji Islanders,fiji
+Indonesian,indone 
+Indian,india
+Sri Lankan,sri
+Irish,ireland
+Salvadoran,salvado
+Kuwaiti,kuwait
+Nepalese,nepal
+German,german
+Italian,ital
+Moroccan,morocc
+Romanian,roman
+Chilean,chil
+Montenegrin,monteneg
+Danish,denmark
+Kenyan,kenya
+Swiss,swit
+Ukrainian,ukrain
+Syrian,syria
+Hungarian,hunga
+Ethiopian,ethiop
+Belarusian,belarus
+Samoan,samoa
+Mozambican,mozambi
+Uzbek,uzbek
+Mexican,mexic
+Greek,gree
+Rwandan,rwanda
+Brazilian,brazil
+Thai,thai
+Argentine,argent
+Ugandan,uganda
+Filipino,ilip
+Australian,australia
+Egyptian,egypt
+Guatemalan,guatema
+Malaysian,malays
+Swedish,swed
+Spanish,spain
+Lithuanian,lithua
+South African,south africa
+Saudi Arabian,saudi
+Albanian,alban
+Peruvian,peru
+Slovak,slovak
+Congolese,congo
+Cameroonian,cameroo
+Singaporean,singa
+Venezuelan,venezu
+Bulgarian,bulgar
+Zambian,zamb
+Swazi,swazi
+Namibian,namibi
+French,france
+Of Myanmar,myanm
+Israeli,israel
+Croatian,croat
+Chinese,china
+of the former Yugoslav Republic of Macedonia,macedo
+Ghanaian,ghana
+Norwegian,norw
+Nicaraguan,nicarag
+Belgian,belg
+Estonian,estoni
+Cambodian,cambod
+Moldovan,moldov
+Jamaican,jamaic
+Azerbaijani,azerbai
+Czech,czech
+Afghan,afghan
+Ecuadorian,ecuador
+American,america
+Jordanian,jordan
+of the United Arab Emirates,emirate
+Finn,finland
+Paraguayan,paragu
+Netherlander,netherla
+Nigerian,nigeri
+Bolivian,bolivi
+Polish,poland
+of Bosnia and Herzegovina,bosnia
+Serbian,serbia
+Colombian,colomb
+Austrian,austri
+Malawian,malawi
+Omani,oman
+Vietnamese,vietna
+Costa Rican,costa
+Panamanian,panama
+Lebanese,leban
+Somali,somali
+Tanzanian,tanzani
+Portuguese,portug
+Uruguayan,urugu
+Honduran,hondur
+Liberian,liberi
+Togolese,togo
+Kazakh,kazak
+Armenian,armenia
+Mongolian,mongol

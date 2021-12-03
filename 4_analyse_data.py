@@ -10,8 +10,14 @@ from matplotlib import pyplot as plt
 
 
 df = pd.read_csv('dataset extract.csv',index_col=0)
+country_citizen = {}
+with open('country_citizen.txt','r') as f:
+    for row in f:
+        citizen,country = row.strip().split(',')
+        country_citizen[citizen] = country
 
-
+df.insert(1, column='defendant_country_match_case', value='-')
+df.insert(1, column='victim_defendant_same_country', value='-')
 df.insert(1, column='keyword_section_match_count', value='-')
 df.insert(1, column='serious_crime', value='-')
 df.insert(1, column='victims_type', value='-')
@@ -36,6 +42,18 @@ stats = {
         'female': 0,
         'child': 0,
         'unknown': 0
+    },
+    'victim_defendant_same_country':{
+        'At least one match': 0,
+        'Country not provided': 0,
+        'Entire field unavailable': 0,
+        'No match': 0
+    },
+    'defendant_country_match_case':{
+        'At least one match': 0,
+        'Defendant country unknown': 0,
+        'Entire field unavailable': 0,
+        'No match': 0
     }
 }
 
@@ -45,6 +63,7 @@ child_ages = []
 unknown_ages = []
 criteria_count = [0,0,0,0,0,0]
 case_total_criteria_met = [0,0,0,0,0,0,0]
+all_defendants_countries = []
 for i in range(len(df.index)):
     # check if all victims children -> can ignore means
     # also plot histogram of ages
@@ -80,8 +99,65 @@ for i in range(len(df.index)):
             else:
                 print('histogram of ages: gender not found')
 
+    # check if any one victim is from the same country as any one defendant
+    victims = df.loc[i, 'victims']
+    defendants = df.loc[i, 'defendants']
+    country_match_found = False
+    unknown_country = False
+    defendant_unknown_country = False
+    defendant_country_match_case = False
+    if victims != '-' and defendants != '-':
+        vv = victims.split(' | ')
+        dd = defendants.split(' | ')
+        for v in vv:
+            v_countries = v.split('_')[2].split('-')
+            for d in dd:
+                d_countries = d.split('_')[2].split('-')
+                for vc in v_countries:
+                    _vc = vc.strip()
+                    if _vc == '?':
+                        unknown_country = True
+                    for dc in d_countries:
+                        _dc = dc.strip()
+                        all_defendants_countries.append(_dc)
+                        if _dc == '?':
+                            unknown_country = True
+                            defendant_unknown_country = True
+                            continue
+                        if _vc == _dc:
+                            country_match_found = True
+                        # check if defendant country matches case country
+                        country_code = country_citizen[_dc]
+                        case_country = df.loc[i, 'country']
+                        if re.search(country_code, case_country, re.IGNORECASE):
+                            defendant_country_match_case = True
 
 
+        if country_match_found:
+            df.loc[i, 'victim_defendant_same_country'] = 'Yes'
+            stats['victim_defendant_same_country']['At least one match'] += 1
+        elif unknown_country:
+            df.loc[i, 'victim_defendant_same_country'] = 'Country not provided'
+            stats['victim_defendant_same_country']['Country not provided'] += 1
+        else:
+            df.loc[i, 'victim_defendant_same_country'] = 'No match'
+            stats['victim_defendant_same_country']['No match'] += 1
+    else:
+        df.loc[i, 'victim_defendant_same_country'] = 'Field missing'
+        stats['victim_defendant_same_country']['Entire field unavailable'] += 1
+
+    if defendant_country_match_case:
+        stats['defendant_country_match_case']['At least one match'] += 1
+        df.loc[i, 'defendant_country_match_case'] = 'Yes'
+    elif df.loc[i, 'country'] == '-' or defendants == '-':
+        stats['defendant_country_match_case']['Entire field unavailable'] += 1
+        df.loc[i, 'defendant_country_match_case'] = 'Field missing'
+    elif defendant_unknown_country:
+        stats['defendant_country_match_case']['Defendant country unknown'] += 1
+        df.loc[i, 'defendant_country_match_case'] = 'Defendant country unknown'
+    else:
+        stats['defendant_country_match_case']['No match'] += 1
+        df.loc[i, 'defendant_country_match_case'] = 'No match'
 
     # check if imprisonment >= 4 years
     imprisonment = df.loc[i, 'imprisonment']
@@ -154,6 +230,7 @@ for i in range(len(df.index)):
     df.loc[i, 'keyword_section_match_count'] = keyword_section_match_count
 
 ## End loop for each case
+
 
 # Plot graphs
 plt.bar(range(6), criteria_count, tick_label=['acts','means','purpose','transnational','organised','seriousness'])
