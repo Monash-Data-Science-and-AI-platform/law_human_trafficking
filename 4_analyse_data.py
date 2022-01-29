@@ -184,8 +184,8 @@ for i in range(len(df.index)):
     acts = (df.loc[i, 'acts'] != '-')
     means = (df.loc[i, 'means'] != '-')
     purpose = (df.loc[i, 'purpose'] != '-')
-    transnational = re.search('Transnational', df.loc[i, 'form'], re.IGNORECASE)
-    organised = re.search('Organized Criminal Group', df.loc[i, 'form'], re.IGNORECASE)
+    transnational = re.search('Transnational', df.loc[i, 'form_transnational'], re.IGNORECASE)
+    organised = re.search('Organized Criminal Group', df.loc[i, 'form_organised'], re.IGNORECASE)
     num_criteria_met = 0
 
     if acts:

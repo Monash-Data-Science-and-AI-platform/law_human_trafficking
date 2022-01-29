@@ -4,7 +4,7 @@
     "transportation": ["transport"],
     "transfer": [],
     "harbouring": ["harbour", "harbor"],
-    "receipt of persons": []
+    "receipt": []
   },
   "means": {
     "threat": [],
@@ -15,14 +15,10 @@
     "deception": ["deceive", "decept"],
     "abuse of power": [],
     "abuse a position of vulnerability": ["position of vulnerability", "vulnerab"],
-    "giving payments to achieve the consent of a person having control over another person": [],
-    "receiving of payments to achieve the consent of a person having control over another person": [],
-    "giving benefits to achieve the consent of a person having control over another person": [],
-    "receiving of benefits to achieve the consent of a person having control over another person": []
+    "Giving or receiving payments or benefits to achieve the consent of a person having control over another person": []
   },
   "purpose": {
-    "the exploitation of the prostitution of others": ["exploit", "prostitut"],
-    "other forms of sexual exploitation": [],
+    "exploitation of the prostitution of others or other forms of sexual exploitation": ["exploit", "prostitut"],
     "forced labour": ["forced labor"],
     "forced services": [],
     "slavery": ["slave"],

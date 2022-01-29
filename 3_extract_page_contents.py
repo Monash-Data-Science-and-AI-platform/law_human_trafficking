@@ -13,11 +13,17 @@ load_path = 'D:/datasets/law_human_trafficking/page_html/'
 df = pd.read_csv('dataset links.csv',index_col=0)
 
 df[['facts_summary', 'legal_reasons',
-    'acts', 'means', 'purpose', 'form', 'imprisonment',
+    'acts', 'means', 'purpose', 'form_transnational', 'form_organised', 'imprisonment',
     'sector',
     'country', 'decision_date', 'legal_system', 'latest_court_ruling',
     'charge', 'court', 'victims', 'defendants', 'defendants_detail', 'pdf_link']] = '-'
 
+all_keywords = {
+    "acts": [],
+    "means": [],
+    "purpose": [],
+    "form": []
+}
 for i in range(len(df.index)):
     name = df.loc[i,'name']
     page_link = df.loc[i,'page_link']
@@ -57,7 +63,8 @@ for i in range(len(df.index)):
             df.loc[i, 'legal_reasons'] = legal_reasons
 
     ## keywords
-    df = keywords.extract_and_search(df, i, soup)
+    df = keywords.extract_and_search(df, i, soup, all_keywords)
+
 
     ## imprisonment
     terms = []
@@ -213,6 +220,11 @@ for i in range(len(df.index)):
 # print(df)
 df.to_csv('dataset extract.csv')
 
+for key in all_keywords:
+    print('###', key, '###')
+    s = set(all_keywords[key])
+    for u in s:
+        print(u)
 # for html_file in os.listdir(load_path):
 #     f = open(os.path.join(load_path,html_file),'r', encoding='utf8')
 #     soup = bs.BeautifulSoup(f, 'html.parser')

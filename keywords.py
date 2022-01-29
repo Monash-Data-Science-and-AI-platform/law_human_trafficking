@@ -15,7 +15,7 @@ Else if a keyword variant is found, flag = 't'
 'form' and 'sector' is copied as is.
 '''
 
-def extract_and_search(df, i, soup):
+def extract_and_search(df, i, soup, all_keywords):
     definitions = json.load(open('keywords.json','r'))
     bad_cases = json.load(open('bad_cases.json','r'))
     flags = copy.deepcopy(definitions)
@@ -41,17 +41,27 @@ def extract_and_search(df, i, soup):
                 theme = None
                 if keyword_label == 'Acts:':
                     theme = 'acts'
+                    all_keywords['acts'] += values_list
                 elif keyword_label == 'Means:':
                     theme = 'means'
+                    all_keywords['means'] += values_list
                 elif keyword_label == 'Purpose of Exploitation:':
                     theme = 'purpose'
+                    all_keywords['purpose'] += values_list
                 elif keyword_label == 'Form of Trafficking:':
                     theme = 'form'
+                    all_keywords['form'] += values_list
                 elif keyword_label == 'Sector in which exploitation takes place:':
                     theme = 'sector'
 
-                if theme == 'sector' or theme == 'form':
+                if theme == 'sector':
                     df.loc[i, theme] = ' | '.join(values_list)
+                elif theme == 'form':
+                    for v in values_list:
+                        if re.search('transnational', v, re.IGNORECASE) or re.search('internal', v, re.IGNORECASE):
+                            df.loc[i, 'form_transnational'] = v
+                        if re.search('Organized', v, re.IGNORECASE):
+                            df.loc[i, 'form_organised'] = v
                 elif theme is not None:
                     for keyword in definitions[theme]:
                         in_keywords = False
