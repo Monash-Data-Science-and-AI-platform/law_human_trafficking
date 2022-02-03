@@ -6,11 +6,14 @@ import time
 import pickle
 import keywords
 import re
-
+import json
+import copy
 
 load_path = 'D:/datasets/law_human_trafficking/page_html/'
 
 df = pd.read_csv('dataset links.csv',index_col=0)
+keyword_definitions = json.load(open('keywords.json','r'))
+bad_cases = json.load(open('bad_cases.json','r'))
 
 df[['facts_summary', 'legal_reasons',
     'acts', 'means', 'purpose', 'form_transnational', 'form_organised', 'imprisonment',
@@ -24,6 +27,11 @@ all_keywords = {
     "purpose": [],
     "form": []
 }
+keyword_count = copy.deepcopy(keyword_definitions)
+for theme in keyword_count:
+    for keyword in keyword_count[theme]:
+        keyword_count[theme][keyword] = 0
+
 for i in range(len(df.index)):
     name = df.loc[i,'name']
     page_link = df.loc[i,'page_link']
@@ -63,7 +71,7 @@ for i in range(len(df.index)):
             df.loc[i, 'legal_reasons'] = legal_reasons
 
     ## keywords
-    df = keywords.extract_and_search(df, i, soup, all_keywords)
+    df = keywords.extract_and_search(keyword_definitions, bad_cases, df, i, soup, all_keywords, keyword_count)
 
 
     ## imprisonment
@@ -225,6 +233,10 @@ for key in all_keywords:
     s = set(all_keywords[key])
     for u in s:
         print(u)
+
+for theme in keyword_count:
+    for keyword in keyword_count[theme]:
+        print(keyword, keyword_count[theme][keyword])
 # for html_file in os.listdir(load_path):
 #     f = open(os.path.join(load_path,html_file),'r', encoding='utf8')
 #     soup = bs.BeautifulSoup(f, 'html.parser')

@@ -15,13 +15,13 @@
     "deception": ["deceive", "decept"],
     "abuse of power": [],
     "abuse a position of vulnerability": ["position of vulnerability", "vulnerab"],
-    "Giving or receiving payments or benefits to achieve the consent of a person having control over another person": []
+    "Giving or receiving payments or benefits to achieve the consent of a person having control over another person": ["giving or receiving payments","achieve the consent of a person"]
   },
   "purpose": {
     "exploitation of the prostitution of others or other forms of sexual exploitation": ["exploit", "prostitut"],
     "forced labour": ["forced labor"],
     "forced services": [],
-    "slavery": ["slave"],
+    "slavery": [],
     "practices similar to slavery": [],
     "servitude": [],
     "removal of organs": []

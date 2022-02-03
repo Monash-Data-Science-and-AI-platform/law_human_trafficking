@@ -15,10 +15,9 @@ Else if a keyword variant is found, flag = 't'
 'form' and 'sector' is copied as is.
 '''
 
-def extract_and_search(df, i, soup, all_keywords):
-    definitions = json.load(open('keywords.json','r'))
-    bad_cases = json.load(open('bad_cases.json','r'))
-    flags = copy.deepcopy(definitions)
+def extract_and_search(keyword_definitions, bad_cases, df, i, soup, all_keywords, keyword_count):
+
+    flags = copy.deepcopy(keyword_definitions)
     for theme in flags:
         for keyword in flags[theme]:
             flags[theme][keyword] = ''
@@ -63,16 +62,32 @@ def extract_and_search(df, i, soup, all_keywords):
                         if re.search('Organized', v, re.IGNORECASE):
                             df.loc[i, 'form_organised'] = v
                 elif theme is not None:
-                    for keyword in definitions[theme]:
+                    for keyword in keyword_definitions[theme]:
                         in_keywords = False
+                        # if keyword == 'slavery':
+                        #     for v in values_list:
+                        #         if re.search(keyword, v, re.IGNORECASE) and not re.search('practices similar to slavery', v, re.IGNORECASE):
+                        #             flags[theme][keyword] += 'K'
+                        #             in_keywords = True
+                        #             break
+                        # elif keyword == 'practices similar to slavery':
+                        #     for v in values_list:
+                        #         if re.search(keyword, v, re.IGNORECASE):
+                        #             flags[theme][keyword] += 'K'
+                        #             in_keywords = True
+                        #             break
+                        # else:
                         for v in values_list:
                             if re.search(keyword, v, re.IGNORECASE):
                                 flags[theme][keyword] += 'K'
                                 in_keywords = True
                                 break
+                        if in_keywords:
+                            keyword_count[theme][keyword] += 1
+
                         # if original keyword not found, search for variants
                         if not in_keywords:
-                            for variant in definitions[theme][keyword]:
+                            for variant in keyword_definitions[theme][keyword]:
                                 for v in values_list:
                                     if re.search(variant, v, re.IGNORECASE):
                                         flags[theme][keyword] += 'k'
@@ -88,8 +103,8 @@ def extract_and_search(df, i, soup, all_keywords):
 
     legal_reasons = df.loc[i, 'legal_reasons']
 
-    for theme in definitions:
-        for keyword in definitions[theme]:
+    for theme in keyword_definitions:
+        for keyword in keyword_definitions[theme]:
             in_text = False
             if re.search(keyword, facts_summary, re.IGNORECASE) or \
                     re.search(keyword, legal_reasons, re.IGNORECASE):
@@ -97,7 +112,7 @@ def extract_and_search(df, i, soup, all_keywords):
                 in_text = True
             # if original keyword not found, search for variants
             if not in_text:
-                for variant in definitions[theme][keyword]:
+                for variant in keyword_definitions[theme][keyword]:
                     if re.search(variant, facts_summary, re.IGNORECASE) or \
                             re.search(variant, legal_reasons, re.IGNORECASE):
                         flags[theme][keyword] += 't'
