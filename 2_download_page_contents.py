@@ -1,14 +1,10 @@
-from selenium import webdriver
-import bs4 as bs
-import numpy as np
+'''
+This script visits each case's webpage and saves the html.
+'''
+
 import pandas as pd
 import requests
-from urllib.parse import urljoin
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 import os
-import time
-import pickle
 
 
 save_path = 'D:/datasets/law_human_trafficking/page_html/'

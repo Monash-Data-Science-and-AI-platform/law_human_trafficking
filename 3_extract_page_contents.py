@@ -1,3 +1,9 @@
+'''
+This script loads the saved html for each page/case and extracts various content from the html.
+The extracted information is stored in respective columns in the dataframe and saved as csv.
+'''
+
+
 import bs4 as bs
 import numpy as np
 import pandas as pd
@@ -12,7 +18,13 @@ import copy
 load_path = 'D:/datasets/law_human_trafficking/page_html/'
 
 df = pd.read_csv('dataset links.csv',index_col=0)
+
+# keyword_definitions contains all keywords of interest to search for.
+# sorted by theme (acts, means, purpose)
+# each theme is a dict of keywords and (as a list) the variants of each keyword that is accepted.
 keyword_definitions = json.load(open('keywords.json','r'))
+
+# bad_cases contains the cleaned version of website content that had unusual characters that could not be read
 bad_cases = json.load(open('bad_cases.json','r'))
 
 df[['facts_summary', 'legal_reasons',
@@ -21,25 +33,29 @@ df[['facts_summary', 'legal_reasons',
     'country', 'decision_date', 'legal_system', 'latest_court_ruling',
     'charge', 'court', 'victims', 'defendants', 'defendants_detail', 'pdf_link']] = '-'
 
+# all_keywords collects all keywords from the keywords section on the website, duplicates included
 all_keywords = {
     "acts": [],
     "means": [],
     "purpose": [],
     "form": []
 }
+
+# keyword_count keeps track of the number of times a keyword appears on the website keyword section. Only counts exact matches.
 keyword_count = copy.deepcopy(keyword_definitions)
+
+# init keyword_count to 0
 for theme in keyword_count:
     for keyword in keyword_count[theme]:
         keyword_count[theme][keyword] = 0
 
+# for each case (row in the dataframe)
 for i in range(len(df.index)):
     name = df.loc[i,'name']
     page_link = df.loc[i,'page_link']
-    # print(page_link)
     f = open(os.path.join(load_path, name+'.html'), 'r', encoding='utf8')
     soup = bs.BeautifulSoup(f, 'html.parser')
 
-    # try:
     ## facts_summary
     a = soup.find('div', class_='factSummary')
     if a is not None:
@@ -65,9 +81,6 @@ for i in range(len(df.index)):
                 legal_reasons += d.text
                 if len(d.text) > 2:
                     legal_reasons += ' \n '
-            # if i in faulty_cases:
-            #     legal_reasons = legal_reasons.replace('\n',' || ')
-            #     legal_reasons = legal_reasons.replace(',', ';')
             df.loc[i, 'legal_reasons'] = legal_reasons
 
     ## keywords
@@ -83,7 +96,7 @@ for i in range(len(df.index)):
     if len(terms):
         df.loc[i, 'imprisonment'] = ' | '.join(terms)
 
-        ## country
+    ## country
     for a in soup.find('div', class_='countryNoHighlight field'):
         for b in a.find('a'):
             df.loc[i,'country'] = str(b)
@@ -122,6 +135,9 @@ for i in range(len(df.index)):
 
 
     ## victims
+    # victims are stored in the format gender_age_country.
+    # if a field is missing, it is filled with '?', e.g. female_?_australia
+    # multiple victims are separated by '|'
     a = soup.find('div', class_='victimsPlaintiffs')
     if a is not None:
         persons = a.find_all('div', class_='person')
@@ -151,6 +167,9 @@ for i in range(len(df.index)):
             df.loc[i, 'victims'] = ' | '.join(victims)
 
     ## defendants
+    # defendants are stored in the format gender_age_country.
+    # if a field is missing, it is filled with '?', e.g. female_?_australia
+    # multiple defendants are separated by '|'
     a = soup.find('div', class_='defendantsRespondents')
     if a is not None:
         df.loc[i, 'defendants_detail'] = a.text
@@ -199,48 +218,17 @@ for i in range(len(df.index)):
     if len(links):
         df.loc[i, 'pdf_link'] = ' \n'.join(links)
 
-        # print(df.loc[i, 'charge'])
-    # a = soup.find_all('div', class_='legislationStatusCode fieldFullWidth')
-    # # print(len(a))
-    # if len(a):
-    #     legislations = []
-    #     for b in a:
-    #         c = b.find('div', class_='value')
-    #         d = c.find_all('p')
-    #         legislation = []
-    #         for e in d:
-    #             legislation.append(e.text)
-    #         legislations.append('\n'.join(legislation))
-    #
-    #     df.loc[i,'legislation'] = '\n\n'.join(legislations)
-    #     # print('///', df.loc[i,'legislation'])
 
-
-
-    # except Exception as e:
-    #     print(page_link)
-    #     print(e)
-    #     print('---------------------------------')
-
-    # if i==5:
-    #     break
-
-# print(df)
 df.to_csv('dataset extract.csv')
 
+# print all unique keywords found from the website
 for key in all_keywords:
     print('###', key, '###')
     s = set(all_keywords[key])
     for u in s:
         print(u)
 
+# print each keyword and its number of occurrences
 for theme in keyword_count:
     for keyword in keyword_count[theme]:
         print(keyword, keyword_count[theme][keyword])
-# for html_file in os.listdir(load_path):
-#     f = open(os.path.join(load_path,html_file),'r', encoding='utf8')
-#     soup = bs.BeautifulSoup(f, 'html.parser')
-#     # print(soup)
-#     case_law_content = soup.find('div', class_='countryNoHighlight field')
-#     # x = case_law_content.find_all('div', class_='countryNoHighlight field ')
-#     print(case_law_content)
